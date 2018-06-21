@@ -112,7 +112,6 @@ void place_queens(Cell **table, int size)
   while(q_count < n)
   {
     int errr = 1;
-
     if(q_pos[q_count-1][1] < (n-2))
     {
       i = q_pos[q_count-1][0] + 1;
@@ -123,13 +122,11 @@ void place_queens(Cell **table, int size)
       i = q_pos[q_count-1][0] + 1;
       j = 0;
     }
-
     while(errr > 0)
     {
       table[i][j].figure = 'Q';
       int a = ch_rows_and_cols(table, n);
       int b = ch_diags(table, n, i, j);
-
       if(a < 1 && b < 1)
       {
         q_pos[q_count][0] = i;
@@ -156,26 +153,15 @@ void place_queens(Cell **table, int size)
         table[i][j].figure = 'E';
         if(err_count > (n-1))
         {
-          q_count--;
-          errr = 1;
-          i = q_pos[q_count][0];
-          j = q_pos[q_count][1];
-          table[i][j].figure = 'E';
-          if(err_count > (2*n-1))
+          int k = err_count / n;
+          while(k > 0)
           {
             q_count--;
             errr = 1;
             i = q_pos[q_count][0];
             j = q_pos[q_count][1];
             table[i][j].figure = 'E';
-            if(err_count > (3*n-1))
-            {
-              q_count--;
-              errr = 1;
-              i = q_pos[q_count][0];
-              j = q_pos[q_count][1];
-              table[i][j].figure = 'E';
-            }
+            k--;
           }
         }
         j++;
