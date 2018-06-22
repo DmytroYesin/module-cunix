@@ -1,4 +1,4 @@
-#include <../include/hash.h>
+#include "../include/hash.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include "../include/linked_list.h"

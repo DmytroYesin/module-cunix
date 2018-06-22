@@ -4,17 +4,18 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
-#include <../include/hash.h>
-#include <../include/linked_list.h>
+#include "../include/hash.h"
+#include "../include/linked_list.h"
+#define LSH_RL_BUFSIZE 1024
+#define LSH_TOK_BUFSIZE 64
+#define LSH_TOK_DELIM " \t\r\n\a"
 
-int fcd(hashtable_t *env, char **args);
 int fexit(hashtable_t *env, char **args);
 int fenv(hashtable_t *env, char **args);
 int fexport(hashtable_t *env, char **args);
 int fecho(hashtable_t *env, char **args);
 
 char *builtin_str[] = {
-  "cd",
   "exit",
   "env",
   "export",
@@ -72,28 +73,13 @@ int num_b_ins()
   return sizeof(builtin_str) / sizeof(char *);
 }
 
-int fcd(hashtable_t *env, char **args)
-{
-  if (args[1] == NULL)
-  {
-    fprintf(stderr, "expected argument to \"cd\"\n");
-  }
-  else
-  {
-    if (chdir(args[1]) != 0)
-    {
-      perror("lsh");
-    }
-  }
-  return 1;
-}
 
 int fexit(hashtable_t *env, char **args)
 {
   return 0;
 }
 
-int m_launch(hashtable_t *env, char **args)
+int f_lok(hashtable_t *env, char **args)
 {
   pid_t pid;
   int status;
@@ -129,28 +115,23 @@ int m_execute(hashtable_t *env, char **args)
   }
     if (strcmp(args[0], builtin_str[0]) == 0)
     {
-      return fcd(env, args);
+      return fexit(env, args);
     }
     else if (strcmp(args[0], builtin_str[1]) == 0)
     {
-      return fexit(env, args);
+      return fenv(env, args);
     }
     else if (strcmp(args[0], builtin_str[2]) == 0)
     {
-      return fenv(env, args);
+      return fexport(env, args);
     }
     else if (strcmp(args[0], builtin_str[3]) == 0)
     {
       return fexport(env, args);
     }
-    else if (strcmp(args[0], builtin_str[4]) == 0)
-    {
-      return fexport(env, args);
-    }
-  return m_launch(env, args);
+ return f_lok(env, args);
 }
 
-#define LSH_RL_BUFSIZE 1024
 char *m_read(void)
 {
   int bufsize = LSH_RL_BUFSIZE;
@@ -191,8 +172,6 @@ char *m_read(void)
   }
 }
 
-#define LSH_TOK_BUFSIZE 64
-#define LSH_TOK_DELIM " \t\r\n\a"
 char **split_l(char *line)
 {
   int bufsize = LSH_TOK_BUFSIZE, pos = 0;
