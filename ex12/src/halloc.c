@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include <stdlib.h>
 #include <stddef.h>
 #define STRUCT_SIZE sizeof(struct halloc_block)
 
@@ -75,19 +74,11 @@ void *halloc(size_t size)
   return(now + 1);
 }
 
-block_h *block_get(void *addr)
-{
-  block_h *res;
-  res = (block_h *)addr - 1;
-  return res;
-}
-
-void free(void *addr)
+void free(block_h *addr)
 {
   if(addr)
   {
-    block_h *targ = block_get(addr);
-    targ -> flag = 1;
+    (addr - 1) -> flag = 1;
     base = NULL;
   }
   else
